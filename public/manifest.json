@@ -1,0 +1,21 @@
+{
+  "name": "Presensi Salat SMAN 7",
+  "short_name": "Salat SMAN 7",
+  "description": "Aplikasi Presensi Salat SMAN 7 Makassar",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3cd157",
+  "icons": [
+    {
+      "src": "/logo smanet.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/logo smanet.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
