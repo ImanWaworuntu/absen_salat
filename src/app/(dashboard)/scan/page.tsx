@@ -16,6 +16,7 @@ export default function ScanPage() {
   const [cameraFacing, setCameraFacing] = useState<"environment" | "user">("environment")
   const scannerRef = useRef<Html5Qrcode | null>(null)
   const isProcessingRef = useRef(false)
+  const lastScanRef = useRef<{ text: string, time: number }>({ text: "", time: 0 })
 
   const playBeep = () => {
     try {
@@ -38,26 +39,35 @@ export default function ScanPage() {
 
   const handleScan = async (decodedText: string) => {
     if (isProcessingRef.current) return
+
+    const now = Date.now()
+    // Ignore the exact same QR code if scanned within the last 5 seconds to prevent accidental duplicate hits
+    if (lastScanRef.current.text === decodedText && now - lastScanRef.current.time < 5000) {
+      return
+    }
+
     isProcessingRef.current = true
+    lastScanRef.current = { text: decodedText, time: now }
 
     try {
       const res = await recordAttendance(decodedText, prayerType)
       
       if (res.success) {
-        toast.success(res.message, { duration: 3000 })
+        toast.success(res.message, { duration: 1000 })
         playBeep()
       } else if (res.alreadyRecorded) {
-        toast.warning(res.message, { duration: 3000 })
+        toast.warning(res.message, { duration: 2000 })
       } else {
-        toast.error(res.message, { duration: 3000 })
+        toast.error(res.message, { duration: 2000 })
       }
     } catch {
-      toast.error("Gagal terhubung ke server.")
+      toast.error("Gagal terhubung ke server.", { duration: 2000 })
     }
 
+    // Set a very short cooldown for DIFFERENT QR codes to allow fast scanning
     setTimeout(() => {
       isProcessingRef.current = false
-    }, 1500)
+    }, 500)
   }
 
   const startScanner = async (facingMode = cameraFacing) => {
