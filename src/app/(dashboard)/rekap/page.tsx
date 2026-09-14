@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { getRekap } from "./actions"
+import { createClient } from "@/utils/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
@@ -28,14 +29,33 @@ export default function RekapPage() {
   const [loading, setLoading] = useState(true)
   
   const [filterClass, setFilterClass] = useState("Semua")
+  const [filterStudentId, setFilterStudentId] = useState("Semua")
+  const [studentsInClass, setStudentsInClass] = useState<{id: string, full_name: string}[]>([])
+  
   const [filterPrayer, setFilterPrayer] = useState("Semua")
   const [dateStart, setDateStart] = useState("")
   const [dateEnd, setDateEnd] = useState("")
+
+  useEffect(() => {
+    if (filterClass === "Semua") {
+      setStudentsInClass([])
+      setFilterStudentId("Semua")
+      return
+    }
+    const fetchStudents = async () => {
+      const supabase = createClient()
+      const { data } = await supabase.from("students").select("id, full_name").eq("class_name", filterClass).order("full_name")
+      if (data) setStudentsInClass(data)
+    }
+    fetchStudents()
+    setFilterStudentId("Semua")
+  }, [filterClass])
 
   const loadData = async () => {
     setLoading(true)
     const res = await getRekap({
       class_name: filterClass,
+      student_id: filterStudentId,
       prayer_type: filterPrayer,
       date_range: dateStart ? { start: dateStart, end: dateEnd || dateStart } : undefined
     })
@@ -128,7 +148,7 @@ export default function RekapPage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col md:flex-row gap-4 items-end">
-            <div className="space-y-2 w-full md:w-1/4">
+            <div className="space-y-2 w-full md:w-1/5">
               <Label>Kelas</Label>
               <Select value={filterClass} onValueChange={(v) => setFilterClass(v || "Semua")}>
                 <SelectTrigger><SelectValue placeholder="Semua Kelas" /></SelectTrigger>
@@ -139,7 +159,18 @@ export default function RekapPage() {
               </Select>
             </div>
             
-            <div className="space-y-2 w-full md:w-1/4">
+            <div className="space-y-2 w-full md:w-1/5">
+              <Label>Siswa</Label>
+              <Select value={filterStudentId} onValueChange={(v) => setFilterStudentId(v || "Semua")} disabled={filterClass === "Semua"}>
+                <SelectTrigger><SelectValue placeholder="Semua Siswa" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Semua">Semua Siswa</SelectItem>
+                  {studentsInClass.map(s => <SelectItem key={s.id} value={s.id}>{s.full_name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2 w-full md:w-1/5">
               <Label>Jenis Salat</Label>
               <Select value={filterPrayer} onValueChange={(v) => setFilterPrayer(v || "Semua")}>
                 <SelectTrigger><SelectValue placeholder="Semua" /></SelectTrigger>
@@ -151,12 +182,12 @@ export default function RekapPage() {
               </Select>
             </div>
 
-            <div className="space-y-2 w-full md:w-1/4">
+            <div className="space-y-2 w-full md:w-1/5">
               <Label>Dari Tanggal</Label>
               <Input type="date" value={dateStart} onChange={(e) => setDateStart(e.target.value)} />
             </div>
 
-            <div className="space-y-2 w-full md:w-1/4">
+            <div className="space-y-2 w-full md:w-1/5">
               <Label>Sampai Tanggal</Label>
               <Input type="date" value={dateEnd} onChange={(e) => setDateEnd(e.target.value)} min={dateStart} />
             </div>

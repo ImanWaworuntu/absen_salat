@@ -2,12 +2,15 @@
 
 import { createClient } from "@/utils/supabase/server"
 
-export async function getRekap(filters: { class_name?: string, date_range?: { start: string, end: string }, prayer_type?: string }) {
+export async function getRekap(filters: { class_name?: string, student_id?: string, date_range?: { start: string, end: string }, prayer_type?: string }) {
   const supabase = await createClient()
 
   let studentsQuery = supabase.from("students").select("id, nis, full_name, class_name").order("class_name").order("full_name")
   if (filters.class_name && filters.class_name !== "Semua") {
     studentsQuery = studentsQuery.eq("class_name", filters.class_name)
+  }
+  if (filters.student_id && filters.student_id !== "Semua") {
+    studentsQuery = studentsQuery.eq("id", filters.student_id)
   }
   
   const { data: students, error: studentsError } = await studentsQuery

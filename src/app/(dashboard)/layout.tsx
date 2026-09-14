@@ -41,6 +41,7 @@ export default function DashboardLayout({
   ]
 
   if (role === "admin") {
+    navItems.push({ name: "Edit Presensi", href: "/admin/attendance", icon: FileText })
     navItems.push({ name: "Manajemen Guru", href: "/admin/users", icon: Users })
   }
 
