@@ -5,8 +5,9 @@ import { usePathname } from "next/navigation"
 import { ScanLine, Users, FileText, LogOut, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { logout } from "./actions"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
+import { createClient } from "@/utils/supabase/client"
 
 export default function DashboardLayout({
   children,
@@ -15,12 +16,33 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [role, setRole] = useState<"admin" | "guru" | null>(null)
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data } = await supabase.from('user_roles').select('role').eq('user_id', user.id).single()
+        if (data) {
+          setRole(data.role as "admin" | "guru")
+        } else {
+          setRole("guru") // default
+        }
+      }
+    }
+    fetchRole()
+  }, [])
 
   const navItems = [
     { name: "Scan QR", href: "/scan", icon: ScanLine },
     { name: "Rekap Data", href: "/rekap", icon: FileText },
     { name: "Data Siswa", href: "/students", icon: Users },
   ]
+
+  if (role === "admin") {
+    navItems.push({ name: "Manajemen Guru", href: "/admin/users", icon: Users })
+  }
 
   return (
     <div className="min-h-screen bg-muted/30 flex flex-col md:flex-row">
