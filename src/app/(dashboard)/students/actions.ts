@@ -15,12 +15,17 @@ export async function getStudents(filters?: { class_name?: string, student_id?: 
   }
 
   const { data, error } = await query
-    .order("class_name", { ascending: true })
-    .order("full_name", { ascending: true })
-  
+
   if (error) {
     console.error(error)
     return { success: false, error: error.message, data: [] }
   }
-  return { success: true, data }
+
+  const sortedData = (data || []).sort((a, b) => {
+    const classCompare = a.class_name.localeCompare(b.class_name, undefined, { numeric: true, sensitivity: 'base' })
+    if (classCompare !== 0) return classCompare
+    return a.full_name.localeCompare(b.full_name, undefined, { numeric: true, sensitivity: 'base' })
+  })
+
+  return { success: true, data: sortedData }
 }

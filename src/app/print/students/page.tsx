@@ -59,7 +59,13 @@ function PrintContent() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 print:grid-cols-4 print:gap-4 max-w-[210mm] mx-auto">
         {students.map(s => (
           <div key={s.id} className="border-2 border-black rounded-lg p-3 flex flex-col items-center text-center break-inside-avoid shadow-sm print:shadow-none">
-            <h3 className="font-bold text-[13px] leading-tight mb-2 tracking-tight">SMAN 7<br/>MAKASSAR</h3>
+            <div className="flex flex-col items-center mb-2 w-full border-b pb-1 border-slate-200">
+              <div className="flex items-center gap-1.5 w-full justify-center">
+                <img src="/logo smanet.jpeg" alt="Logo" className="w-5 h-5 object-contain" />
+                <h3 className="font-bold text-[12px] leading-none tracking-tight">SISALAT SMANET</h3>
+              </div>
+              <p className="text-[7px] font-medium mt-1 text-slate-700 text-center leading-tight">Sistem Salat SMA Negeri 7 Makassar</p>
+            </div>
             <div className="bg-white p-1 rounded mb-2 border border-slate-200">
               <QRCodeSVG value={s.qr_token} size={110} level="M" />
             </div>

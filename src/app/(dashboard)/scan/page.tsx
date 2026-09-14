@@ -122,19 +122,37 @@ export default function ScanPage() {
     }
   }, [])
 
+  const [currentTime, setCurrentTime] = useState<Date | null>(null)
+
+  useEffect(() => {
+    setCurrentTime(new Date())
+    const interval = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
   return (
-    <div className="space-y-6 max-w-lg mx-auto">
+    <div className="space-y-6 max-w-4xl mx-auto">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Pemindai QR Code</h1>
         <p className="text-muted-foreground">Pilih jenis salat lalu aktifkan kamera.</p>
         
         <div className="mt-4 bg-muted/50 rounded-lg p-3 inline-flex items-center gap-3 border text-sm font-medium text-slate-700">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-          {new Date().toLocaleDateString('id-ID', { 
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-            timeZone: 'Asia/Makassar' 
-          })} 
-          • WITA
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse mt-0.5"></div>
+          <div className="flex flex-col">
+            <span>
+              {currentTime ? currentTime.toLocaleDateString('id-ID', { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                timeZone: 'Asia/Makassar' 
+              }) : 'Memuat tanggal...'}
+            </span>
+            {currentTime && (
+              <span className="text-muted-foreground font-mono mt-0.5">
+                {currentTime.toLocaleTimeString('id-ID', { timeZone: 'Asia/Makassar' })} WITA
+              </span>
+            )}
+          </div>
         </div>
       </div>
 

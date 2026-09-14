@@ -5,13 +5,14 @@ import { createClient } from "@/utils/supabase/server"
 export async function getRekapClasses() {
   const supabase = await createClient()
   const { data } = await supabase.from("students").select("class_name")
-  return Array.from(new Set(data?.map(c => c.class_name) || [])).sort()
+  const classes = Array.from(new Set(data?.map(c => c.class_name) || []))
+  return classes.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }))
 }
 
 export async function getRekap(filters: { class_name?: string, student_id?: string, date_range?: { start: string, end: string }, prayer_type?: string }) {
   const supabase = await createClient()
 
-  let studentsQuery = supabase.from("students").select("id, nis, full_name, class_name").order("class_name").order("full_name")
+  let studentsQuery = supabase.from("students").select("id, nis, full_name, class_name")
   if (filters.class_name && filters.class_name !== "Semua") {
     studentsQuery = studentsQuery.eq("class_name", filters.class_name)
   }
@@ -46,10 +47,14 @@ export async function getRekap(filters: { class_name?: string, student_id?: stri
       total_asar: totalAsar,
       total_semua: totalZuhur + totalAsar
     }
+  }).sort((a, b) => {
+    const classCompare = a.class_name.localeCompare(b.class_name, undefined, { numeric: true, sensitivity: 'base' })
+    if (classCompare !== 0) return classCompare
+    return a.full_name.localeCompare(b.full_name, undefined, { numeric: true, sensitivity: 'base' })
   })
 
   const { data: allClasses } = await supabase.from("students").select("class_name")
-  const uniqueClasses = Array.from(new Set(allClasses?.map(c => c.class_name) || [])).sort()
+  const uniqueClasses = Array.from(new Set(allClasses?.map(c => c.class_name) || [])).sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }))
 
   return { success: true, data: rekap, classes: uniqueClasses }
 }
