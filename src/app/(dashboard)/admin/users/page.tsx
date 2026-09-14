@@ -21,11 +21,11 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
 
-  const fetchUsers = async () => {
-    setLoading(true)
+  const fetchUsers = async (background = false) => {
+    if (!background) setLoading(true)
     const data = await getGurus()
     setUsers(data)
-    setLoading(false)
+    if (!background) setLoading(false)
   }
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function AdminUsersPage() {
     } else {
       toast.success("Akun guru berhasil dibuat!")
       e.currentTarget.reset()
-      fetchUsers()
+      await fetchUsers(true)
     }
     setSubmitting(false)
   }
@@ -56,7 +56,7 @@ export default function AdminUsersPage() {
       toast.error(res.error)
     } else {
       toast.success("Akun berhasil dihapus!")
-      fetchUsers()
+      await fetchUsers(true)
     }
   }
 

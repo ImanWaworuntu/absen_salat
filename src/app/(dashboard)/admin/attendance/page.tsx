@@ -21,11 +21,11 @@ export default function AdminAttendancePage() {
   const [submitting, setSubmitting] = useState(false)
   const [date, setDate] = useState(() => new Date().toISOString().split('T')[0])
 
-  const fetchLogs = async () => {
-    setLoading(true)
+  const fetchLogs = async (background = false) => {
+    if (!background) setLoading(true)
     const data = await getLogs(date)
     setLogs(data)
-    setLoading(false)
+    if (!background) setLoading(false)
   }
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function AdminAttendancePage() {
       toast.error(res.error)
     } else {
       toast.success("Presensi manual berhasil ditambahkan!")
-      fetchLogs()
+      await fetchLogs(true)
     }
     setSubmitting(false)
   }
@@ -58,7 +58,7 @@ export default function AdminAttendancePage() {
       toast.error("Gagal menghapus log")
     } else {
       toast.success("Log berhasil dihapus!")
-      fetchLogs()
+      await fetchLogs(true)
     }
   }
 
@@ -118,7 +118,7 @@ export default function AdminAttendancePage() {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>Riwayat Pemindaian ({date})</CardTitle>
-              <Button variant="outline" size="icon" onClick={fetchLogs}><Search className="w-4 h-4" /></Button>
+              <Button type="button" variant="outline" size="icon" onClick={() => fetchLogs()}><Search className="w-4 h-4" /></Button>
             </div>
           </CardHeader>
           <CardContent>
