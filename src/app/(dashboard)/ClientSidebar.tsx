@@ -76,7 +76,7 @@ export default function ClientSidebar({ role, email }: { role: string, email: st
         
         <div className="p-4 border-t">
           <form action={logout}>
-            <Button variant="ghost" className="w-full justify-start gap-3 text-red-500 hover:text-red-600 hover:bg-red-50">
+            <Button type="submit" variant="ghost" className="w-full justify-start gap-3 text-red-500 hover:text-red-600 hover:bg-red-50">
               <LogOut className="w-5 h-5" />
               Keluar
             </Button>
