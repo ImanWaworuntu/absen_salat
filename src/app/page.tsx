@@ -172,7 +172,11 @@ export default function Home() {
                           !selectedClass ? "Pilih kelas dahulu" : 
                           studentsInClass.length === 0 ? "Memuat siswa..." : 
                           "Pilih Nama Anda"
-                        } />
+                        }>
+                          {selectedStudentId 
+                            ? studentsInClass.find(s => s.id === selectedStudentId)?.full_name 
+                            : undefined}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {studentsInClass.map((student) => (
