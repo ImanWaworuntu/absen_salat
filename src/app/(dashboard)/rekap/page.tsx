@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { getRekap } from "./actions"
+import { getRekap, getRekapClasses } from "./actions"
 import { createClient } from "@/utils/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -26,7 +26,8 @@ type RekapData = {
 export default function RekapPage() {
   const [data, setData] = useState<RekapData[]>([])
   const [classes, setClasses] = useState<string[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [hasSearched, setHasSearched] = useState(false)
   
   const [filterClass, setFilterClass] = useState("Semua")
   const [filterStudentId, setFilterStudentId] = useState("Semua")
@@ -62,18 +63,16 @@ export default function RekapPage() {
     
     if (res.success) {
       setData(res.data || [])
-      setClasses(res.classes || [])
     } else {
       toast.error("Gagal mengambil data rekap")
     }
     setLoading(false)
+    setHasSearched(true)
   }
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    loadData()
-  }, []) // Initial load
+    getRekapClasses().then(setClasses)
+  }, [])
 
   const handleExport = () => {
     if (data.length === 0) {
@@ -219,6 +218,12 @@ export default function RekapPage() {
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
                       Memuat data rekap...
+                    </TableCell>
+                  </TableRow>
+                ) : !hasSearched ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                      Silakan sesuaikan filter lalu klik "Terapkan" untuk melihat data rekap.
                     </TableCell>
                   </TableRow>
                 ) : data.length === 0 ? (

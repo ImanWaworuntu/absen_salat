@@ -2,6 +2,12 @@
 
 import { createClient } from "@/utils/supabase/server"
 
+export async function getRekapClasses() {
+  const supabase = await createClient()
+  const { data } = await supabase.from("students").select("class_name")
+  return Array.from(new Set(data?.map(c => c.class_name) || [])).sort()
+}
+
 export async function getRekap(filters: { class_name?: string, student_id?: string, date_range?: { start: string, end: string }, prayer_type?: string }) {
   const supabase = await createClient()
 

@@ -4,10 +4,9 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { ScanLine, Users, FileText, LogOut, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { logout } from "./actions"
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { createClient } from "@/utils/supabase/client"
+import { getUserProfile, logout } from "./actions"
 
 export default function DashboardLayout({
   children,
@@ -17,21 +16,19 @@ export default function DashboardLayout({
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [role, setRole] = useState<"admin" | "guru" | null>(null)
+  const [email, setEmail] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchRole = async () => {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data } = await supabase.from('user_roles').select('role').eq('user_id', user.id).single()
-        if (data) {
-          setRole(data.role as "admin" | "guru")
-        } else {
-          setRole("guru") // default
-        }
+    const fetchProfile = async () => {
+      const profile = await getUserProfile()
+      if (profile) {
+        setRole(profile.role as "admin" | "guru")
+        setEmail(profile.email || null)
+      } else {
+        setRole("guru")
       }
     }
-    fetchRole()
+    fetchProfile()
   }, [])
 
   const navItems = [
@@ -63,9 +60,17 @@ export default function DashboardLayout({
         ${isMobileMenuOpen ? 'flex' : 'hidden'} 
         md:flex flex-col w-full md:w-64 bg-white border-r md:min-h-screen z-10
       `}>
-        <div className="hidden md:flex items-center gap-3 p-6 border-b">
-          <Image src="/logo smanet.jpeg" alt="Logo" width={40} height={40} className="object-contain" />
-          <span className="font-bold text-lg text-primary">SMAN 7</span>
+        <div className="hidden md:flex flex-col p-6 border-b">
+          <div className="flex items-center gap-3 mb-2">
+            <Image src="/logo smanet.jpeg" alt="Logo" width={40} height={40} className="object-contain" />
+            <span className="font-bold text-lg text-primary leading-tight">SMAN 7<br/>Makassar</span>
+          </div>
+          {email && (
+            <div className="mt-2 text-xs text-muted-foreground truncate bg-slate-50 p-2 rounded-md border">
+              <span className="block font-semibold text-slate-700 capitalize mb-0.5">{role}</span>
+              {email}
+            </div>
+          )}
         </div>
         
         <nav className="flex-1 p-4 space-y-2">

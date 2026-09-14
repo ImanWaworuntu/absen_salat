@@ -20,12 +20,16 @@ export async function recordAttendance(qrToken: string, prayerType: 'zuhur' | 'a
     return { success: false, message: "QR Code tidak valid atau siswa tidak ditemukan." }
   }
 
+  // Convert current time to Makassar Time (WITA) date string
+  const makassarDate = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Makassar' })
+
   // 3. Record attendance
   const { error: insertError } = await supabase
     .from("prayer_logs")
     .insert({
       student_id: student.id,
       prayer_type: prayerType,
+      prayer_date: makassarDate,
       recorded_by: user.id,
     })
 

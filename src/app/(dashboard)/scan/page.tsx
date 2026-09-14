@@ -127,6 +127,15 @@ export default function ScanPage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Pemindai QR Code</h1>
         <p className="text-muted-foreground">Pilih jenis salat lalu aktifkan kamera.</p>
+        
+        <div className="mt-4 bg-muted/50 rounded-lg p-3 inline-flex items-center gap-3 border text-sm font-medium text-slate-700">
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+          {new Date().toLocaleDateString('id-ID', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+            timeZone: 'Asia/Makassar' 
+          })} 
+          • WITA
+        </div>
       </div>
 
       <Card>
