@@ -19,6 +19,7 @@ export default function ScanPage() {
 
   const playBeep = () => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const context = new (window.AudioContext || (window as any).webkitAudioContext)()
       const oscillator = context.createOscillator()
       const gainNode = context.createGain()
@@ -30,7 +31,7 @@ export default function ScanPage() {
       oscillator.start()
       gainNode.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 0.1)
       oscillator.stop(context.currentTime + 0.1)
-    } catch (e) {
+    } catch {
       console.log("Audio not supported")
     }
   }
@@ -50,7 +51,7 @@ export default function ScanPage() {
       } else {
         toast.error(res.message, { duration: 3000 })
       }
-    } catch (e) {
+    } catch {
       toast.error("Gagal terhubung ke server.")
     }
 
@@ -61,7 +62,7 @@ export default function ScanPage() {
 
   const startScanner = async (facingMode = cameraFacing) => {
     if (!scannerRef.current) {
-      scannerRef.current = new Html5Qrcode("reader")
+      scannerRef.current = new Html5Qrcode("reader", { verbose: false, formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE] })
     }
 
     try {
@@ -72,8 +73,7 @@ export default function ScanPage() {
         { facingMode },
         {
           fps: 10,
-          qrbox: { width: 250, height: 250 },
-          formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
+          qrbox: { width: 250, height: 250 }
         },
         handleScan,
         undefined

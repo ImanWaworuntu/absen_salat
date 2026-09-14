@@ -12,8 +12,18 @@ import { Download, Search, CheckCircle2 } from "lucide-react"
 import * as XLSX from "xlsx"
 import { toast } from "sonner"
 
+type RekapData = {
+  id: string
+  nis: string
+  full_name: string
+  class_name: string
+  total_zuhur: number
+  total_asar: number
+  total_semua: number
+}
+
 export default function RekapPage() {
-  const [data, setData] = useState<any[]>([])
+  const [data, setData] = useState<RekapData[]>([])
   const [classes, setClasses] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   
@@ -40,6 +50,8 @@ export default function RekapPage() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData()
   }, []) // Initial load
 
@@ -118,7 +130,7 @@ export default function RekapPage() {
           <div className="flex flex-col md:flex-row gap-4 items-end">
             <div className="space-y-2 w-full md:w-1/4">
               <Label>Kelas</Label>
-              <Select value={filterClass} onValueChange={setFilterClass}>
+              <Select value={filterClass} onValueChange={(v) => setFilterClass(v || "Semua")}>
                 <SelectTrigger><SelectValue placeholder="Semua Kelas" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Semua">Semua Kelas</SelectItem>
@@ -129,7 +141,7 @@ export default function RekapPage() {
             
             <div className="space-y-2 w-full md:w-1/4">
               <Label>Jenis Salat</Label>
-              <Select value={filterPrayer} onValueChange={setFilterPrayer}>
+              <Select value={filterPrayer} onValueChange={(v) => setFilterPrayer(v || "Semua")}>
                 <SelectTrigger><SelectValue placeholder="Semua" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Semua">Semua (Zuhur & Asar)</SelectItem>
