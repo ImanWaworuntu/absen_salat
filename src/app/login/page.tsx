@@ -55,12 +55,12 @@ export default function LoginPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="username">Username / Email</Label>
                 <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="guru@sman7.sch.id"
+                  id="username"
+                  name="username"
+                  type="text"
+                  placeholder="Masukkan username"
                   required
                 />
               </div>

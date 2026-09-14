@@ -7,8 +7,13 @@ import { createClient } from "@/utils/supabase/server"
 export async function login(formData: FormData) {
   const supabase = await createClient()
 
+  let username = formData.get("username") as string
+  if (username && !username.includes("@")) {
+    username = `${username.trim()}@smanet.local`
+  }
+
   const data = {
-    email: formData.get("email") as string,
+    email: username,
     password: formData.get("password") as string,
   }
 

@@ -20,7 +20,7 @@ export async function getUserProfile() {
   const { data } = await adminClient.from('user_roles').select('role').eq('user_id', user.id).single()
   
   return {
-    email: user.email,
+    email: user.email?.replace('@smanet.local', ''),
     role: data?.role || 'guru'
   }
 }

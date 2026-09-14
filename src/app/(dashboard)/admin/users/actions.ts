@@ -31,10 +31,13 @@ export async function getGurus() {
 }
 
 export async function createGuru(formData: FormData) {
-  const email = formData.get("email") as string
+  let username = formData.get("username") as string
   const password = formData.get("password") as string
   
-  if (!email || !password) return { error: "Email dan password wajib diisi" }
+  if (!username || !password) return { error: "Username dan password wajib diisi" }
+  
+  username = username.trim()
+  const email = username.includes("@") ? username : `${username}@smanet.local`
 
   const admin = createAdminClient()
   

@@ -80,8 +80,8 @@ export default function AdminUsersPage() {
           <CardContent>
             <form onSubmit={handleCreate} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" name="email" type="email" placeholder="guru@sman7.sch.id" required />
+                <Label htmlFor="username">Username / Email</Label>
+                <Input id="username" name="username" type="text" placeholder="Contoh: agus123" required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
@@ -107,7 +107,7 @@ export default function AdminUsersPage() {
                 <table className="w-full text-sm text-left">
                   <thead className="bg-muted text-muted-foreground">
                     <tr>
-                      <th className="px-4 py-3 font-medium">Email</th>
+                      <th className="px-4 py-3 font-medium">Username</th>
                       <th className="px-4 py-3 font-medium">Role</th>
                       <th className="px-4 py-3 font-medium text-right">Aksi</th>
                     </tr>
@@ -115,7 +115,7 @@ export default function AdminUsersPage() {
                   <tbody className="divide-y">
                     {users.map((user) => (
                       <tr key={user.id} className="bg-white hover:bg-slate-50 transition-colors">
-                        <td className="px-4 py-3 font-medium">{user.email}</td>
+                        <td className="px-4 py-3 font-medium">{user.email?.replace('@smanet.local', '')}</td>
                         <td className="px-4 py-3">
                           {user.role === 'admin' ? (
                             <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 w-max">
