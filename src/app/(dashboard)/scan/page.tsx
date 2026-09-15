@@ -83,7 +83,8 @@ export default function ScanPage() {
         { facingMode },
         {
           fps: 10,
-          qrbox: { width: 250, height: 250 }
+          qrbox: { width: 300, height: 300 },
+          aspectRatio: 1.0
         },
         handleScan,
         undefined

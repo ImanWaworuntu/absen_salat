@@ -38,7 +38,7 @@ export async function recordAttendance(qrToken: string, prayerType: 'zuhur' | 'a
       return { success: false, alreadyRecorded: true, message: `Siswa ${student.full_name} sudah tercatat presensi ${prayerType} hari ini.` }
     }
     console.error("Insert error:", insertError)
-    return { success: false, message: "Terjadi kesalahan sistem saat menyimpan data." }
+    return { success: false, message: `Gagal menyimpan: ${insertError.message}` }
   }
 
   return { success: true, message: `Berhasil mencatat kehadiran ${prayerType} untuk ${student.full_name}.`, student }

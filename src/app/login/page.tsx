@@ -22,11 +22,13 @@ export default function LoginPage() {
     
     const result = await login(formData)
     
-    // Jika login berhasil, redirect akan dipicu di server action
-    // Jadi baris ini hanya dieksekusi jika ada error
+    // Jika login berhasil, alihkan menggunakan window.location agar lebih handal
     if (result?.error) {
       toast.error(result.error)
       setLoading(false)
+    } else if (result?.success) {
+      toast.success("Berhasil masuk")
+      window.location.href = "/scan"
     }
   }
 
