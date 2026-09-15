@@ -1,6 +1,6 @@
 "use server"
 
-import { createClient } from "@/utils/supabase/server"
+import { createClient, createAdminClient } from "@/utils/supabase/server"
 
 export async function getRekapClasses() {
   const supabase = await createClient()
@@ -23,7 +23,8 @@ export async function getRekap(filters: { class_name?: string, student_id?: stri
   const { data: students, error: studentsError } = await studentsQuery
   if (studentsError) return { success: false, error: studentsError.message }
 
-  let logsQuery = supabase.from("prayer_logs").select("student_id, prayer_type, prayer_date")
+  const adminClient = createAdminClient()
+  let logsQuery = adminClient.from("prayer_logs").select("student_id, prayer_type, prayer_date")
   if (filters.date_range && filters.date_range.start) {
     logsQuery = logsQuery.gte("prayer_date", filters.date_range.start)
     if (filters.date_range.end) {

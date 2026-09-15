@@ -3,8 +3,8 @@ import { createClient, createAdminClient } from "@/utils/supabase/server"
 import { revalidatePath } from "next/cache"
 
 export async function getLogs(date: string) {
-  const supabase = await createClient()
-  const { data, error } = await supabase.from('prayer_logs')
+  const adminClient = createAdminClient()
+  const { data, error } = await adminClient.from('prayer_logs')
     .select(`id, prayer_type, prayer_date, scanned_at, students!inner(id, full_name, class_name)`)
     .eq('prayer_date', date)
     .order('scanned_at', { ascending: false })
