@@ -1,6 +1,6 @@
 "use server"
 
-import { createClient } from "@/utils/supabase/server"
+import { createClient, createAdminClient } from "@/utils/supabase/server"
 
 export async function recordAttendance(qrToken: string, prayerType: 'zuhur' | 'asar') {
   const supabase = await createClient()
@@ -23,8 +23,9 @@ export async function recordAttendance(qrToken: string, prayerType: 'zuhur' | 'a
   // Convert current time to Makassar Time (WITA) date string
   const makassarDate = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Makassar' })
 
-  // 3. Record attendance
-  const { error: insertError } = await supabase
+  // 3. Record attendance with Admin Client to bypass RLS missing policies
+  const adminClient = createAdminClient()
+  const { error: insertError } = await adminClient
     .from("prayer_logs")
     .insert({
       student_id: student.id,

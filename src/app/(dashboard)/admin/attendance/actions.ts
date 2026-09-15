@@ -1,5 +1,5 @@
 "use server"
-import { createClient } from "@/utils/supabase/server"
+import { createClient, createAdminClient } from "@/utils/supabase/server"
 import { revalidatePath } from "next/cache"
 
 export async function getLogs(date: string) {
@@ -21,7 +21,11 @@ export async function getStudentsForManual() {
 
 export async function deleteLog(id: number) {
   const supabase = await createClient()
-  const { error } = await supabase.from('prayer_logs').delete().eq('id', id)
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: "Akses ditolak" }
+
+  const adminClient = createAdminClient()
+  const { error } = await adminClient.from('prayer_logs').delete().eq('id', id)
   if (error) return { error: error.message }
   revalidatePath('/admin/attendance')
   return { success: true }
@@ -36,7 +40,8 @@ export async function addManualLog(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: "Akses ditolak" }
 
-  const { error } = await supabase.from('prayer_logs').insert({
+  const adminClient = createAdminClient()
+  const { error } = await adminClient.from('prayer_logs').insert({
     student_id,
     prayer_type,
     prayer_date: date,
